@@ -9,12 +9,14 @@ import ru.axdar.data.utils.Result
 import ru.axdar.data.utils.runOperationCatching
 
 class NewsLocalDataSource(private val context: Context) {
-    suspend fun getNews(): Result<NewsEntity, Throwable> {
+
+    suspend fun getNews(): Result<List<NewsEntity?>, Throwable> {
         return runOperationCatching {
             delay(1000L)
             withContext(Dispatchers.IO) {
-                AppDatabase.getDatabase(context).newsDao().getById(1) ?: NewsEntity(2)
+                AppDatabase.getDatabase(context).newsDao().getAll() ?: emptyList<NewsEntity>()
             }
         }
     }
+
 }

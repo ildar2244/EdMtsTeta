@@ -10,7 +10,7 @@ import ru.axdar.data.utils.doOnError
 import ru.axdar.data.utils.doOnSuccess
 
 class NewsViewModel(
-    repository: NewsRepository
+    private val repository: NewsRepository
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<NewsState> = MutableStateFlow(NewsState.Loading)
@@ -18,12 +18,25 @@ class NewsViewModel(
     val state = _state.asStateFlow()
 
     init {
+        getNews()
+    }
+
+    fun refreshData() {
+        _state.value = NewsState.Loading
+        getNews()
+    }
+
+    private fun getNews() {
         viewModelScope.launch {
             repository.getNews().collect {
                 it.doOnError { error ->
                     _state.emit(NewsState.Error(error))
                 }.doOnSuccess { news ->
-                    _state.emit(NewsState.Content(news.id))
+                    if (news.isEmpty()) {
+                        _state.emit(NewsState.Loading)
+                    } else {
+                        _state.emit(NewsState.Content(news))
+                    }
                 }
             }
         }

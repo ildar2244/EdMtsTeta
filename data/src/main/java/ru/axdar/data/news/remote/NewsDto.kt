@@ -7,12 +7,31 @@ import ru.axdar.data.news.repository.News
 
 class NewsDto {
     @Parcelize
-    data class Request(@SerializedName("id") val id: Int) : Parcelable
+    class Request : Parcelable
 
     @Parcelize
-    data class Response(@SerializedName("id") val id: Int) : Parcelable
+    data class Response(
+        @SerializedName("data") val data: List<ResponseParamData>
+    ) : Parcelable
+
+    @Parcelize
+    data class ResponseParamData(
+        @SerializedName("id") val id: String,
+        @SerializedName("author") val author: String = "",
+        @SerializedName("title") val title: String = "",
+        @SerializedName("content") val content: String = "",
+        @SerializedName("imageUrl") val imageUrl: String = "",
+    ) : Parcelable
 }
 
-internal fun NewsDto.Response.toDomain(): News {
-    return News(this.id)
+internal fun NewsDto.Response.toDomain(): List<News> {
+    return this.data.map { dto ->
+        News(
+            id = dto.id,
+            author = dto.author,
+            title = dto.title,
+            content = dto.content,
+            imageUrl = dto.imageUrl,
+        )
+    }
 }

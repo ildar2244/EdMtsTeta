@@ -14,7 +14,7 @@ class NewsRepository(
     private val newsLocalDataSource: NewsLocalDataSource,
     private val newsRemoteDataSource: NewsRemoteDataSource
 ) {
-    fun getNews(): Flow<Result<News, Throwable>> {
+    fun getNews(): Flow<Result<List<News>, Throwable>> {
         return flow {
             newsLocalDataSource.getNews()
                 .doOnError {
