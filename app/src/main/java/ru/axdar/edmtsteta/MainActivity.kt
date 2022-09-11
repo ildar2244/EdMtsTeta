@@ -1,5 +1,6 @@
 package ru.axdar.edmtsteta
 
+import NewsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,19 +11,29 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ru.axdar.data.news.db.NewsLocalDataSource
+import ru.axdar.data.news.remote.NewsRemoteDataSource
+import ru.axdar.data.news.repository.NewsRepository
 import ru.axdar.edmtsteta.ui.theme.EdMtsTetaTheme
+import ru.axdar.news.NewsViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             EdMtsTetaTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    NewsScreen(
+                        viewModel = NewsViewModel(
+                            NewsRepository(
+                                NewsLocalDataSource(applicationContext),
+                                NewsRemoteDataSource()
+                            )
+                        )
+                    )
                 }
             }
         }
